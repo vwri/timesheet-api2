@@ -90,7 +90,9 @@ def process_timesheet_df(raw: pd.DataFrame) -> pd.DataFrame:
             segs = re.split('(?=' + '|'.join(map(re.escape, sub_heads)) + ')', txt)
             for s in segs:
                 for sh in sub_heads:
-                    if s.startswith(sh): parsed_allow[sh[:-1]] = s[len(sh):].strip(); break
+                    if s.startswith(sh):
+                        parsed_allow[sh[:-1]] = s[len(sh):].strip()
+                        break
 
         records.append({
             'Name':f"{surname} {first_name}".strip(),
@@ -119,7 +121,7 @@ async def process_json(file: UploadFile = File(...)):
     try:
         raw = pd.read_excel(file.file, header=None, dtype=str)
         df = process_timesheet_df(raw)
-        return JSONResponse(content=df.to_dict(orient='records'))
+        return JSONResponse(content=df.to_dict(orient="records"))
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -132,10 +134,10 @@ async def process_excel(file: UploadFile = File(...)):
         df.to_excel(buf, index=False)
         buf.seek(0)
         return StreamingResponse(
-    buf,
-    media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    headers={"Content-Disposition": "attachment; filename=summary.xlsx"}
-)
+            buf,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": "attachment; filename=summary.xlsx"}
+        )
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
