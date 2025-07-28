@@ -131,7 +131,11 @@ async def process_excel(file: UploadFile = File(...)):
         buf = io.BytesIO()
         df.to_excel(buf, index=False)
         buf.seek(0)
-        return StreamingResponse(buf, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', headers={'Content-Disposition':'attachment; filename=summary.xlsx'})
+        return StreamingResponse(
+    buf,
+    media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    headers={"Content-Disposition": "attachment; filename=summary.xlsx"}
+)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
